@@ -1,0 +1,94 @@
+#include <iostream>
+#include <vector>
+#include <iomanip>
+#include <string>
+
+using namespace std;
+
+// Transaction struct to hold transaction data
+struct Transaction {
+    string description;
+    double amount;
+    string type; // "income" or "expense"
+};
+
+// Function to display the menu
+void displayMenu() {
+    cout << "\nPersonal Budget Tracker\n";
+    cout << "1. Add Transaction\n";
+    cout << "2. View Transactions\n";
+    cout << "3. View Current Balance\n";
+    cout << "4. Exit\n";
+    cout << "Select an option: ";
+}
+
+// Function to calculate and display the current balance
+double calculateBalance(const vector<Transaction>& transactions) {
+    double balance = 0.0;
+    for (const auto& t : transactions) {
+        if (t.type == "income") {
+            balance += t.amount;
+        } else if (t.type == "expense") {
+            balance -= t.amount;
+        }
+    }
+    return balance;
+}
+
+int main() {
+    vector<Transaction> transactions;
+    int choice;
+
+    do {
+        displayMenu();
+        cin >> choice;
+
+        switch (choice) {
+            case 1: {
+                Transaction t;
+                cout << "Enter description: ";
+                cin.ignore(); // To ignore the newline character
+                getline(cin, t.description);
+                cout << "Enter amount: ";
+                cin >> t.amount;
+                cout << "Enter type (income/expense): ";
+                cin >> t.type;
+
+                // Validate transaction type
+                if (t.type != "income" && t.type != "expense") {
+                    cout << "Invalid transaction type. Please use 'income' or 'expense'.\n";
+                    break;
+                }
+
+                transactions.push_back(t);
+                cout << "Transaction added successfully!\n";
+                break;
+            }
+            case 2: {
+                cout << "\nTransaction History:\n";
+                cout << left << setw(20) << "Description" 
+                     << setw(10) << "Amount" 
+                     << "Type\n";
+                cout << string(40, '-') << "\n";
+                for (const auto& t : transactions) {
+                    cout << left << setw(20) << t.description 
+                         << setw(10) << t.amount 
+                         << t.type << "\n";
+                }
+                break;
+            }
+            case 3: {
+                double balance = calculateBalance(transactions);
+                cout << "Current Balance: $" << fixed << setprecision(2) << balance << "\n";
+                break;
+            }
+            case 4:
+                cout << "Exiting the program. Goodbye!\n";
+                break;
+            default:
+                cout << "Invalid choice. Please try again.\n";
+        }
+    } while (choice != 4);
+
+    return 0;
+}
